@@ -77,6 +77,8 @@ include(":edc-extensions:dataplane-proxy:edc-dataplane-proxy-provider-core")
 include(":edc-extensions:dataplane-proxy:edc-dataplane-proxy-provider-api")
 include(":edc-tests:edc-dataplane-proxy-e2e")
 
+// perf tests
+include(":edc-performance-tests")
 
 // this is needed to have access to snapshot builds of plugins
 pluginManagement {
