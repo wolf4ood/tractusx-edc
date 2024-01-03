@@ -1,0 +1,33 @@
+{
+  "id": "did:example:${PARTICIPANT}",
+  "@context": [
+    "https://www.w3.org/ns/did/v1",
+    {
+      "@base": "did:example:dataspace_issuer"
+    }
+  ],
+  "service": [
+    {
+      "id": "#credential-service",
+      "type": "CredentialService",
+      "serviceEndpoint": "${PARTICIPANT_CS}"
+    }
+  ],
+  "verificationMethod": [
+    {
+      "id": "did:example:${PARTICIPANT}#key-1",
+      "controller": "did:example:${PARTICIPANT}",
+      "type": "JsonWebKey2020",
+      "publicKeyJwk": {
+        "kty": "EC",
+        "kid": "key-1",
+        "crv": "P-256",
+        "x": "1l0Lof0a1yBc8KXhesAnoBvxZw5roYnkAXuqCYfNK3c",
+        "y": "sfoTFhbolxlMR5c0oQHoUesL8M1dt22wtLXBXFYFv_w"
+      }
+    }
+  ],
+  "authentication": [
+    "#key-1"
+  ]
+}

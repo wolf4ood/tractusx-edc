@@ -14,16 +14,11 @@
 
 plugins {
     `java-library`
-    `java-test-fixtures`
+    `maven-publish`
 }
 
 dependencies {
     implementation(libs.edc.spi.core)
-    implementation(libs.edc.spi.jwt)
-    implementation(libs.jakartaJson)
-
-    testFixturesImplementation(libs.jacksonJsonP)
-    testFixturesImplementation(libs.jackson.datatypeJsr310)
-    testFixturesImplementation(libs.titaniumJsonLd)
-    testFixturesImplementation(libs.jackson.datatypeJsr310)
+    implementation(libs.edc.spi.policyengine)
+    implementation(libs.edc.identity.core.trust)
 }

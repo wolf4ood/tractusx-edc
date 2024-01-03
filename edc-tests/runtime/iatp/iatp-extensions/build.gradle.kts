@@ -14,16 +14,17 @@
 
 plugins {
     `java-library`
-    `java-test-fixtures`
 }
 
-dependencies {
-    implementation(libs.edc.spi.core)
-    implementation(libs.edc.spi.jwt)
-    implementation(libs.jakartaJson)
 
-    testFixturesImplementation(libs.jacksonJsonP)
-    testFixturesImplementation(libs.jackson.datatypeJsr310)
-    testFixturesImplementation(libs.titaniumJsonLd)
-    testFixturesImplementation(libs.jackson.datatypeJsr310)
+dependencies {
+
+    implementation(libs.edc.ih.spi.store)
+
+}
+
+
+// do not publish
+edcBuild {
+    publish.set(false)
 }
