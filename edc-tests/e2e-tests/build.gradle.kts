@@ -47,6 +47,7 @@ dependencies {
     testImplementation(libs.testcontainers.junit)
     testImplementation(libs.testcontainers.postgres)
     testImplementation(libs.testcontainers.vault)
+    testImplementation(libs.bouncyCastle.bcpkixJdk18on)
 
     testCompileOnly(project(":edc-tests:runtime:extensions"))
     testCompileOnly(project(":edc-tests:runtime:runtime-memory"))
@@ -62,6 +63,7 @@ dependencies {
     testFixturesImplementation(libs.edc.spi.contract)
     testFixturesImplementation(project(":spi:edr-spi"))
     testFixturesImplementation(project(":edc-extensions:bpn-validation:bpn-validation-spi"))
+
 }
 
 // do not publish
