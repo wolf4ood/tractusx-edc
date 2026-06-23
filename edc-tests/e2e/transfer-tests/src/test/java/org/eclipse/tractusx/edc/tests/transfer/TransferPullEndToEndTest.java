@@ -21,9 +21,12 @@ package org.eclipse.tractusx.edc.tests.transfer;
 
 import jakarta.json.JsonObject;
 import org.eclipse.edc.connector.controlplane.transfer.spi.types.TransferProcessStates;
+import org.eclipse.edc.connector.dataplane.selector.spi.DataPlaneSelectorService;
+import org.eclipse.edc.connector.dataplane.selector.spi.instance.DataPlaneInstance;
 import org.eclipse.edc.jsonld.spi.JsonLd;
 import org.eclipse.edc.junit.annotations.EndToEndTest;
 import org.eclipse.edc.junit.extensions.RuntimeExtension;
+import org.eclipse.edc.participantcontext.single.spi.SingleParticipantContextSupplier;
 import org.eclipse.tractusx.edc.tests.participant.TractusxParticipantBase;
 import org.eclipse.tractusx.edc.tests.participant.TransferParticipant;
 import org.eclipse.tractusx.edc.tests.runtimes.PostgresExtension;
@@ -47,6 +50,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static jakarta.ws.rs.core.Response.Status;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
+import static org.eclipse.edc.spi.constants.CoreConstants.EDC_NAMESPACE;
 import static org.eclipse.tractusx.edc.tests.TestRuntimeConfiguration.CONSUMER_BPN;
 import static org.eclipse.tractusx.edc.tests.TestRuntimeConfiguration.CONSUMER_DID;
 import static org.eclipse.tractusx.edc.tests.TestRuntimeConfiguration.CONSUMER_NAME;
@@ -74,6 +78,7 @@ public class TransferPullEndToEndTest {
                 .bpn(PROVIDER_BPN)
                 .build();
 
+
         @Override
         public TractusxParticipantBase provider() {
             return PROVIDER;
@@ -84,24 +89,57 @@ public class TransferPullEndToEndTest {
             return CONSUMER;
         }
 
+
         @Test
-        void transferData_withSuspendResume() {
+        void transferData() {
             var assetId = "api-asset-1";
 
             Map<String, Object> dataAddress = Map.of(
-                    "baseUrl", privateBackendUrl,
+                    EDC_NAMESPACE + "baseUrl", privateBackendUrl,
                     "type", "HttpData",
-                    "contentType", "application/json"
+                    EDC_NAMESPACE + "contentType", "application/json"
             );
 
-            PROVIDER.createAsset(assetId, Map.of(), dataAddress);
+            PROVIDER.createAsset(assetId, Map.of(), dataAddress, dataAddress);
 
             var accessPolicyId = PROVIDER.createPolicyDefinition(createAccessPolicy(CONSUMER.getBpn()));
             var contractPolicyId = PROVIDER.createPolicyDefinition(createContractPolicy(CONSUMER.getBpn()));
             PROVIDER.createContractDefinition(assetId, "def-1", accessPolicyId, contractPolicyId);
             var transferProcessId = CONSUMER.requestAssetFrom(assetId, PROVIDER)
                     .withTransferType("HttpData-PULL")
-                    .withDestination(httpDataDestination())
+                    .execute();
+
+            CONSUMER.waitForTransferProcess(transferProcessId, TransferProcessStates.STARTED);
+
+            // wait until EDC is available on the consumer side
+            server.stubFor(get(MOCK_BACKEND_PATH).willReturn(ok("test response")));
+
+            var edr = CONSUMER.edrs().waitForEdr(transferProcessId);
+
+            // consumer can fetch data with a valid token
+            var data = CONSUMER.data().pullData(edr, Map.of());
+            assertThat(data).isNotNull().isEqualTo("test response");
+
+            server.verify(1, getRequestedFor(urlPathEqualTo(MOCK_BACKEND_PATH)));
+        }
+
+        @Test
+        void transferData_withSuspendResume() {
+            var assetId = "api-asset-1";
+
+            Map<String, Object> dataAddress = Map.of(
+                    EDC_NAMESPACE + "baseUrl", privateBackendUrl,
+                    "type", "HttpData",
+                    EDC_NAMESPACE + "contentType", "application/json"
+            );
+
+            PROVIDER.createAsset(assetId, Map.of(), dataAddress, dataAddress);
+
+            var accessPolicyId = PROVIDER.createPolicyDefinition(createAccessPolicy(CONSUMER.getBpn()));
+            var contractPolicyId = PROVIDER.createPolicyDefinition(createContractPolicy(CONSUMER.getBpn()));
+            PROVIDER.createContractDefinition(assetId, "def-1", accessPolicyId, contractPolicyId);
+            var transferProcessId = CONSUMER.requestAssetFrom(assetId, PROVIDER)
+                    .withTransferType("HttpData-PULL")
                     .execute();
 
             CONSUMER.waitForTransferProcess(transferProcessId, TransferProcessStates.STARTED);
@@ -424,7 +462,7 @@ public class TransferPullEndToEndTest {
             PROVIDER.setProtocol(DSP_08);
             PROVIDER.setId(PROVIDER.getBpn());
         }
-        
+
         @AfterAll
         static void afterAll() {
             PROVIDER.setId(PROVIDER.getDid());
@@ -450,6 +488,22 @@ public class TransferPullEndToEndTest {
             CONSUMER.setJsonLd(CONSUMER_RUNTIME.getService(JsonLd.class));
             CONSUMER.setProtocol(DSP_2025);
             PROVIDER.setProtocol(DSP_2025);
+
+
+            addDataPlane(CONSUMER_RUNTIME, CONSUMER);
+            addDataPlane(PROVIDER_RUNTIME, PROVIDER);
+
+        }
+
+        static void addDataPlane(RuntimeExtension extension, TractusxParticipantBase participant) {
+            var selector = extension.getService(DataPlaneSelectorService.class);
+            var pplSupplier = extension.getService(SingleParticipantContextSupplier.class);
+
+            selector.register(DataPlaneInstance.Builder.newInstance().allowedTransferType("HttpData-PULL")
+                    .participantContextId(pplSupplier.get().getContent().getParticipantContextId())
+                    .url(participant.getControl().get() + "/dataflows")
+                    .build());
+
         }
     }
 }

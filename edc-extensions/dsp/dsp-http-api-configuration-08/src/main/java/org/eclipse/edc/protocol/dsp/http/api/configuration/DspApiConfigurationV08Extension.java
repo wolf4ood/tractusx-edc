@@ -25,6 +25,7 @@ import org.eclipse.edc.connector.controlplane.transform.edc.to.JsonObjectToAsset
 import org.eclipse.edc.connector.controlplane.transform.odrl.OdrlTransformersFactory;
 import org.eclipse.edc.connector.controlplane.transform.odrl.from.JsonObjectFromPolicyTransformer;
 import org.eclipse.edc.jsonld.spi.JsonLd;
+import org.eclipse.edc.jsonld.spi.JsonLdNamespace;
 import org.eclipse.edc.participant.spi.ParticipantIdMapper;
 import org.eclipse.edc.protocol.dsp.http.spi.api.DspBaseWebhookAddress;
 import org.eclipse.edc.protocol.spi.DataspaceProfileContext;
@@ -45,6 +46,7 @@ import org.eclipse.edc.transform.transformer.edc.to.JsonObjectToCriterionTransfo
 import org.eclipse.edc.transform.transformer.edc.to.JsonObjectToQuerySpecTransformer;
 import org.eclipse.edc.transform.transformer.edc.to.JsonValueToGenericTypeTransformer;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.eclipse.edc.jsonld.spi.JsonLdKeywords.VOCAB;
@@ -71,7 +73,8 @@ import static org.eclipse.edc.spi.constants.CoreConstants.JSON_LD;
 public class DspApiConfigurationV08Extension implements ServiceExtension {
 
     public static final String NAME = "Dataspace Protocol API Configuration v08 Extension";
-
+    @Inject
+    CriterionOperatorRegistry criterionOperatorRegistry;
     @Inject
     private TypeManager typeManager;
     @Inject
@@ -80,8 +83,6 @@ public class DspApiConfigurationV08Extension implements ServiceExtension {
     private TypeTransformerRegistry transformerRegistry;
     @Inject
     private ParticipantIdMapper participantIdMapper;
-    @Inject
-    CriterionOperatorRegistry criterionOperatorRegistry;
     @Inject
     private DspBaseWebhookAddress dspWebhookAddress;
     @Inject
@@ -96,7 +97,7 @@ public class DspApiConfigurationV08Extension implements ServiceExtension {
 
     @Override
     public void initialize(ServiceExtensionContext context) {
-        dataspaceProfileContextRegistry.registerDefault(new DataspaceProfileContext(DATASPACE_PROTOCOL_HTTP, V_08, () -> dspWebhookAddress.get(), participantIdExtractionFunction));
+        dataspaceProfileContextRegistry.registerDefault(new DataspaceProfileContext(DATASPACE_PROTOCOL_HTTP, V_08, () -> dspWebhookAddress.get(), participantIdExtractionFunction, new JsonLdNamespace(""), List.of()));
 
         // registers ns for DSP scope
         registerNamespaces();

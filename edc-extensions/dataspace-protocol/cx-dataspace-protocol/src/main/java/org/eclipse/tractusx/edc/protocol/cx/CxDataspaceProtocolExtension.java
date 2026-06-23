@@ -20,6 +20,7 @@
 
 package org.eclipse.tractusx.edc.protocol.cx;
 
+import org.eclipse.edc.jsonld.spi.JsonLdNamespace;
 import org.eclipse.edc.participantcontext.single.spi.SingleParticipantContextSupplier;
 import org.eclipse.edc.participantcontext.spi.identity.ParticipantIdentityResolver;
 import org.eclipse.edc.protocol.dsp.http.spi.api.DspBaseWebhookAddress;
@@ -34,6 +35,7 @@ import org.eclipse.edc.spi.system.ServiceExtensionContext;
 import org.eclipse.tractusx.edc.protocol.cx.identifier.BpnExtractionFunction;
 import org.eclipse.tractusx.edc.protocol.cx.identifier.CatenaxParticipantIdentityResolver;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.eclipse.edc.protocol.dsp.http.spi.types.HttpMessageProtocol.DATASPACE_PROTOCOL_HTTP;
@@ -43,7 +45,7 @@ public class CxDataspaceProtocolExtension implements ServiceExtension {
 
     @Setting(description = "the BPN of the participant", key = "tractusx.edc.participant.bpn")
     private String bpn;
-    
+
     @Inject
     private DataspaceProfileContextRegistry contextRegistry;
     @Inject
@@ -56,7 +58,7 @@ public class CxDataspaceProtocolExtension implements ServiceExtension {
     @Override
     public void initialize(ServiceExtensionContext context) {
         Stream.of(
-                new DataspaceProfileContext(DATASPACE_PROTOCOL_HTTP, V_08, () -> dspWebhookAddress.get(), new BpnExtractionFunction(monitor))
+                new DataspaceProfileContext(DATASPACE_PROTOCOL_HTTP, V_08, () -> dspWebhookAddress.get(), new BpnExtractionFunction(monitor), new JsonLdNamespace(""), List.of())
         ).forEach(contextRegistry::register);
     }
 

@@ -2,7 +2,7 @@
 format.version = "1.1"
 
 [versions]
-edc = "0.17.0"
+edc = "0.18.0-SNAPSHOT"
 edc-build = "1.5.2"
 allure = "2.35.2"
 awaitility = "4.3.0"
@@ -111,19 +111,20 @@ edc-lib-query = { module = "org.eclipse.edc:query-lib", version.ref = "edc" }
 edc-lib-store = { module = "org.eclipse.edc:store-lib", version.ref = "edc" }
 edc-lib-token = { module = "org.eclipse.edc:token-lib", version.ref = "edc" }
 edc-lib-transform = { module = "org.eclipse.edc:transform-lib", version.ref = "edc" }
+edc-lib-transform-controlplane = { module = "org.eclipse.edc:controlplane-transform-lib", version.ref = "edc" }
 edc-lib-util = { module = "org.eclipse.edc:util-lib", version.ref = "edc" }
 edc-lib-validator = { module = "org.eclipse.edc:validator-lib", version.ref = "edc" }
 edc-lib-sql = { module = "org.eclipse.edc:sql-lib", version.ref = "edc" }
-edc-lib-dsp-catalog-http-api= { module = "org.eclipse.edc:dsp-catalog-http-api-lib", version.ref = "edc" }
-edc-lib-dsp-catalog-validation= { module = "org.eclipse.edc:dsp-catalog-validation-lib", version.ref = "edc" }
-edc-lib-dsp-catalog-transform= { module = "org.eclipse.edc:dsp-catalog-transform-lib", version.ref = "edc" }
-edc-lib-dsp-negotiation-validation= { module = "org.eclipse.edc:dsp-negotiation-validation-lib", version.ref = "edc" }
-edc-lib-dsp-negotiation-http-api= { module = "org.eclipse.edc:dsp-negotiation-http-api-lib", version.ref = "edc" }
-edc-lib-dsp-negotiation-transform= { module = "org.eclipse.edc:dsp-negotiation-transform-lib", version.ref = "edc" }
-edc-lib-dsp-transfer-http-api= { module = "org.eclipse.edc:dsp-transfer-process-http-api-lib", version.ref = "edc" }
-edc-lib-dsp-transfer-process-validation= { module = "org.eclipse.edc:dsp-transfer-process-validation-lib", version.ref = "edc" }
-edc-lib-dsp-transfer-process-http-api= { module = "org.eclipse.edc:dsp-transfer-process-http-api-lib", version.ref = "edc" }
-edc-lib-dsp-transfer-process-transform= { module = "org.eclipse.edc:dsp-transfer-process-transform-lib", version.ref = "edc" }
+edc-lib-dsp-catalog-http-api = { module = "org.eclipse.edc:dsp-catalog-http-api-lib", version.ref = "edc" }
+edc-lib-dsp-catalog-validation = { module = "org.eclipse.edc:dsp-catalog-validation-lib", version.ref = "edc" }
+edc-lib-dsp-catalog-transform = { module = "org.eclipse.edc:dsp-catalog-transform-lib", version.ref = "edc" }
+edc-lib-dsp-negotiation-validation = { module = "org.eclipse.edc:dsp-negotiation-validation-lib", version.ref = "edc" }
+edc-lib-dsp-negotiation-http-api = { module = "org.eclipse.edc:dsp-negotiation-http-api-lib", version.ref = "edc" }
+edc-lib-dsp-negotiation-transform = { module = "org.eclipse.edc:dsp-negotiation-transform-lib", version.ref = "edc" }
+edc-lib-dsp-transfer-http-api = { module = "org.eclipse.edc:dsp-transfer-process-http-api-lib", version.ref = "edc" }
+edc-lib-dsp-transfer-process-validation = { module = "org.eclipse.edc:dsp-transfer-process-validation-lib", version.ref = "edc" }
+edc-lib-dsp-transfer-process-http-api = { module = "org.eclipse.edc:dsp-transfer-process-http-api-lib", version.ref = "edc" }
+edc-lib-dsp-transfer-process-transform = { module = "org.eclipse.edc:dsp-transfer-process-transform-lib", version.ref = "edc" }
 edc-lib-dcp = { module = "org.eclipse.edc:decentralized-claims-lib", version.ref = "edc" }
 edc-lib-verifiable-credentials = { module = "org.eclipse.edc:verifiable-credentials-lib", version.ref = "edc" }
 
@@ -184,7 +185,7 @@ tck-extension = { module = "org.eclipse.edc:tck-extension", version.ref = "edc" 
 # DSP libraries
 dsp-spi-http = { module = "org.eclipse.edc:dsp-http-spi", version.ref = "edc" }
 dsp-spi-v2025 = { module = "org.eclipse.edc:dsp-spi-2025", version.ref = "edc" }
-dsp-spi= { module = "org.eclipse.edc:dsp-spi", version.ref = "edc" }
+dsp-spi = { module = "org.eclipse.edc:dsp-spi", version.ref = "edc" }
 
 ## IH for testing
 

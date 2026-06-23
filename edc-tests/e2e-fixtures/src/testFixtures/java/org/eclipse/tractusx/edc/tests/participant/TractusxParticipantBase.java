@@ -78,6 +78,8 @@ public abstract class TractusxParticipantBase extends IdentityParticipant {
     private static final String API_KEY_HEADER_NAME = "x-api-key";
     protected final LazySupplier<URI> dataPlaneProxy = new LazySupplier<>(() -> URI.create("http://localhost:" + getFreePort()));
     protected final LazySupplier<URI> dataPlanePublic = new LazySupplier<>(() -> URI.create("http://localhost:" + getFreePort() + "/public"));
+    protected final LazySupplier<URI> signaling = new LazySupplier<>(() -> URI.create("http://localhost:" + getFreePort() + "/signaling"));
+    protected final LazySupplier<URI> control = new LazySupplier<>(() -> URI.create("http://localhost:" + getFreePort() + "/control"));
     protected ParticipantEdrApi edrs;
     protected ParticipantDataApi data;
     protected ParticipantConsumerDataPlaneApi dataPlane;
@@ -88,12 +90,12 @@ public abstract class TractusxParticipantBase extends IdentityParticipant {
     public void createAsset(String id) {
         createAsset(id, new HashMap<>(), Map.of("type", "test-type"));
     }
-    
+
     @NotNull
     public String getBpn() {
         return bpn;
     }
-    
+
     @NotNull
     public String getDid() {
         return did;
@@ -113,6 +115,11 @@ public abstract class TractusxParticipantBase extends IdentityParticipant {
         this.id = id;
     }
 
+
+    public LazySupplier<URI> getControl() {
+        return control;
+    }
+
     public Config getConfig() {
         var settings = new HashMap<String, String>() {
             {
@@ -125,8 +132,10 @@ public abstract class TractusxParticipantBase extends IdentityParticipant {
                 put("web.http.management.port", String.valueOf(controlPlaneManagement.get().getPort()));
                 put("web.http.management.path", controlPlaneManagement.get().getPath());
                 put("web.http.management.auth.key", MANAGEMENT_API_KEY);
-                put("web.http.control.port", String.valueOf(getFreePort()));
-                put("web.http.control.path", "/control");
+                put("web.http.control.port", String.valueOf(control.get().getPort()));
+                put("web.http.control.path", control.get().getPath());
+                put("web.http.signaling.port", String.valueOf(signaling.get().getPort()));
+                put("web.http.signaling.path", signaling.get().getPath());
                 put("edc.dsp.callback.address", controlPlaneProtocol.get().toString());
                 put("web.http.public.path", dataPlanePublic.get().getPath());
                 put("web.http.public.port", String.valueOf(dataPlanePublic.get().getPort()));
@@ -176,6 +185,30 @@ public abstract class TractusxParticipantBase extends IdentityParticipant {
      */
     public ParticipantConsumerDataPlaneApi dataPlane() {
         return dataPlane;
+    }
+
+    public String createAsset(String assetId, Map<String, Object> properties, Map<String, Object> dataAddressProperties, Map<String, Object> dataplaneMetadata) {
+        var requestBody = createObjectBuilder()
+                .add(CONTEXT, managementContext)
+                .add(TYPE, "Asset")
+                .add(ID, assetId)
+                .add("properties", createObjectBuilder(properties))
+                .add("dataAddress", createObjectBuilder(dataAddressProperties))
+                .add("dataplaneMetadata", createObjectBuilder()
+                        .add("@type", "DataplaneMetadata")
+                        .add("properties", createObjectBuilder(dataAddressProperties)))
+                .build();
+
+        return baseManagementRequest()
+                .contentType(JSON)
+                .body(requestBody)
+                .when()
+                .post("/assets")
+                .then()
+                .log().ifError()
+                .statusCode(200)
+                .contentType(JSON)
+                .extract().jsonPath().getString(ID);
     }
 
     /**
@@ -280,7 +313,7 @@ public abstract class TractusxParticipantBase extends IdentityParticipant {
                 .then();
 
     }
-    
+
     public String getTransferProcessField(String transferProcessId, String fieldName) {
         return baseManagementRequest()
                 .basePath("/v3")
@@ -347,7 +380,7 @@ public abstract class TractusxParticipantBase extends IdentityParticipant {
         protected Builder(P participant) {
             super(participant);
         }
-        
+
         public B bpn(String bpn) {
             this.participant.bpn = bpn;
             return self();
@@ -357,7 +390,7 @@ public abstract class TractusxParticipantBase extends IdentityParticipant {
             this.participant.did = did;
             return self();
         }
-        
+
         public B protocolVersionPath(String path) {
             this.participant.protocol = new Protocol(this.participant.protocol.name(), path);
             return self();

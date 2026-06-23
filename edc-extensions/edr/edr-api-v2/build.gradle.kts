@@ -24,12 +24,11 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":spi:callback-spi"))
     implementation(project(":spi:edr-spi"))
     implementation(project(":spi:core-spi"))
     implementation(project(":spi:tokenrefresh-spi"))
 
-    implementation(libs.edc.api.management){
+    implementation(libs.edc.api.management) {
         exclude("org.eclipse.edc", "edr-cache-api")
     }
     implementation(libs.edc.lib.api)

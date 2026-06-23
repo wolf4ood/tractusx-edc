@@ -19,26 +19,21 @@
 
 package org.eclipse.edc.protocol.dsp.http.dispatcher;
 
-import org.eclipse.edc.protocol.dsp.http.spi.dispatcher.DspHttpRemoteMessageDispatcher;
+import org.eclipse.edc.connector.controlplane.services.spi.protocol.ProtocolRemoteMessageDispatcher;
 import org.eclipse.edc.runtime.metamodel.annotation.Inject;
-import org.eclipse.edc.spi.message.RemoteMessageDispatcherRegistry;
 import org.eclipse.edc.spi.system.ServiceExtension;
 import org.eclipse.edc.spi.system.ServiceExtensionContext;
-
-import static org.eclipse.edc.protocol.dsp.http.spi.types.HttpMessageProtocol.DATASPACE_PROTOCOL_HTTP;
 
 /**
  * Registers the message dispatcher for DSP v0.8.
  */
 public class DspHttpDispatcherV08Extension implements ServiceExtension {
-    
+
     @Inject
-    private RemoteMessageDispatcherRegistry dispatcherRegistry;
-    @Inject
-    private DspHttpRemoteMessageDispatcher dispatcher;
-    
+    private ProtocolRemoteMessageDispatcher dispatcherRegistry;
+
+
     @Override
     public void initialize(ServiceExtensionContext context) {
-        dispatcherRegistry.register(DATASPACE_PROTOCOL_HTTP, dispatcher);
     }
 }

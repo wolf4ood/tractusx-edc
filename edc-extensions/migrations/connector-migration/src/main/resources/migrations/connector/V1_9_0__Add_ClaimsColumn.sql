@@ -17,3 +17,5 @@
 ALTER TABLE edc_contract_agreement ADD COLUMN IF NOT EXISTS claims JSON;
 
 ALTER TABLE edc_transfer_process ADD COLUMN IF NOT EXISTS claims JSON;
+
+ALTER TABLE edc_transfer_process ADD COLUMN IF NOT EXISTS data_address_owner BOOLEAN DEFAULT FALSE;

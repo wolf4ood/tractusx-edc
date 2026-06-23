@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2023 Bayerische Motoren Werke Aktiengesellschaft (BMW AG)
+ * Copyright (c) 2026 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -19,24 +19,25 @@
 
 plugins {
     `java-library`
-    `java-test-fixtures`
+    `maven-publish`
+    id(libs.plugins.swagger.get().pluginId)
 }
 
 dependencies {
-    testImplementation(project(":spi:bdrs-client-spi"))
-    testImplementation(testFixtures(project(":edc-tests:e2e-fixtures")))
+    api(libs.edc.spi.web)
+    api(libs.edc.spi.dataplane.dataplane)
+    api(libs.edc.spi.core)
+    api(libs.edc.spi.jsonld)
 
-    testImplementation(libs.wiremock)
+    implementation(libs.jakarta.rsApi)
+
     testImplementation(libs.edc.junit)
-    testImplementation(libs.edc.spi.dataplane.selector)
     testImplementation(libs.restAssured)
-    testImplementation(libs.awaitility)
-    testRuntimeOnly(libs.edc.transaction.local)
-
-    testCompileOnly(project(":edc-tests:runtime:runtime-postgresql"))
+    testImplementation(testFixtures(libs.edc.core.jersey))
 }
 
-// do not publish
 edcBuild {
-    publish.set(false)
+    swagger {
+        apiGroup.set("data-plane")
+    }
 }

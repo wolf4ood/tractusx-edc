@@ -24,6 +24,9 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         mavenCentral()
+        maven {
+            url = uri("https://central.sonatype.com/repository/maven-snapshots/")
+        }
     }
 }
 
@@ -33,14 +36,13 @@ dependencyResolutionManagement {
         mavenCentral()
     }
     versionCatalogs {
-        create("stableLibs") {
-            from(files("./gradle/libs.stable.versions.toml"))
-        }
+//        create("stableLibs") {
+//            from(files("./gradle/libs.stable.versions.toml"))
+//        }
     }
 }
 
 // spi modules
-include(":spi:callback-spi")
 include(":spi:edr-spi")
 include(":spi:core-spi")
 include(":spi:tokenrefresh-spi")
@@ -71,7 +73,6 @@ include(":edc-extensions:tokenrefresh-handler")
 include(":edc-extensions:bdrs-client")
 include(":edc-extensions:event-subscriber")
 include(":edc-extensions:edr:edr-api-v2")
-include(":edc-extensions:edr:edr-callback")
 include(":edc-extensions:edr:edr-index-lock-sql")
 include(":edc-extensions:cx-policy")
 include(":edc-extensions:cx-policy-legacy")
@@ -116,6 +117,7 @@ include(":edc-extensions:dataplane:dataplane-token-refresh:token-refresh-api")
 include(":edc-extensions:dataplane:dataplane-proxy:dataplane-public-api-v2")
 include(":edc-extensions:dataplane:dataflow:dataflow-api")
 include(":edc-extensions:dataplane:dataflow:dataflow-service")
+include(":edc-extensions:dataplane:dataplane-signaling-api")
 
 include(":edc-extensions:non-finite-provider-push:non-finite-provider-push-spi")
 include(":edc-extensions:non-finite-provider-push:non-finite-provider-push-core")
@@ -154,8 +156,8 @@ include(":edc-tests:runtime:runtime-dcp-tck")
 include("edc-tests:runtime:runtime-discovery:runtime-discovery-base")
 include("edc-tests:runtime:runtime-discovery:runtime-discovery-no-protocols")
 include("edc-tests:runtime:runtime-discovery:runtime-discovery-with-dsp-v08")
-include("edc-tests:runtime:runtime-compatibility:stable:extensions")
-include("edc-tests:runtime:runtime-compatibility:stable:connector-stable")
+//include("edc-tests:runtime:runtime-compatibility:stable:extensions")
+//include("edc-tests:runtime:runtime-compatibility:stable:connector-stable")
 include("edc-tests:runtime:runtime-compatibility:snapshot:connector-snapshot")
 
 // modules for controlplane artifacts
